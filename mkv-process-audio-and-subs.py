@@ -5,14 +5,14 @@ import sys
 language = 'ger' # 3 letters, lower case!
 
 
-def handlemkv(name):
-	print name
+def handlemkv(mkvfilename):
+	print mkvfilename
 	# find Audio streams 	
 	# ffmpeg -i *.mkv 2>&1 | grep -i -e Audio:
 	# Example output:
 	#    Stream #0:1(ger): Audio: ac3, 48000 Hz, stereo, fltp, 224 kb/s (default)
 	#    Stream #0:2(jpn): Audio: ac3, 48000 Hz, stereo, fltp, 224 kb/s
-	cmd = 'ffmpeg -i "' + name + '" 2>&1 | grep -i -e Audio:'
+	cmd = 'ffmpeg -i "' + mkvfilename + '" 2>&1 | grep -i -e Audio:'
 	print "cmd is", cmd
 	streamnumber = -1
 	for thisline in os.popen(cmd).readlines():
@@ -29,16 +29,19 @@ def handlemkv(name):
 
 	# leave only one audio stream, remove all subs
 	# mkvmerge -o new2.mkv -a 1 --nosubs movie-Ger-Jap-Dub.mkv
-	directory, filename = os.path.split(name)
+	directory, filename = os.path.split(mkvfilename)
 	cleanmoviename = os.path.join(directory, "cleanedmovie.mkv")
 	print "cleanmoviename", cleanmoviename
-	cmd = 'mkvmerge -o "' + cleanmoviename + '" -a 1 --nosubs "' + name + '"'
+	cmd = 'mkvmerge -o "' + cleanmoviename + '" -a 1 --nosubs "' + mkvfilename + '"'
 	print "command is", cmd
 	for thisline in os.popen(cmd).readlines():
 		print thisline.rstrip()
 
-	# move / rename
-	# to do ...
+	# Delete original mkv and rename new one to original name
+	print "Cleaning up"
+	os.remove(mkvfilename)
+	os.rename(cleanmoviename, mkvfilename)
+
 
 
 try:
