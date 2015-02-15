@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import re
 
 language = 'ger' # 3 letters, lower case!
 
@@ -18,7 +19,14 @@ def handlemkv(mkvfilename):
 	for thisline in os.popen(cmd).readlines():
 		print thisline.rstrip()
 		if thisline.find(language)>=0:
-			streamnumber = thisline.split(':')[1].split('(')[0]
+			try:
+				# streamnumber = thisline.split(':')[1].split('(')[0]
+				streamnumber = re.findall(r"[\w']+", thisline)[2]
+				print "Stream number", streamnumber
+				streamnumber = int(streamnumber)	# force it to be an integer so we know we found correct info
+			except:
+				print "Something went wrong with find the stream number. Please report with logfile"
+				sys.exit(0)
 			break
 	if streamnumber >= 0:
 		print "Language found in stream", streamnumber
@@ -32,7 +40,7 @@ def handlemkv(mkvfilename):
 	directory, filename = os.path.split(mkvfilename)
 	cleanmoviename = os.path.join(directory, "cleanedmovie.mkv")
 	print "cleanmoviename", cleanmoviename
-	cmd = 'mkvmerge -o "' + cleanmoviename + '" -a ' + streamnumber + '  --nosubs "' + mkvfilename + '"'
+	cmd = 'mkvmerge -o "' + cleanmoviename + '" -a 1 --nosubs "' + mkvfilename + '"'
 	print "command is", cmd
 	for thisline in os.popen(cmd).readlines():
 		print thisline.rstrip()
@@ -57,5 +65,6 @@ for path, subdirs, files in os.walk(root):
     for name in files:
         fullname = os.path.join(path, name)
 	if os.path.splitext(fullname)[1].lower() == '.mkv':
+		print "Found mkv", fullname
 		handlemkv(fullname)
 
