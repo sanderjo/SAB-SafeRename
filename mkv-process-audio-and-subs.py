@@ -45,10 +45,11 @@ def handlemkv(mkvfilename):
 	for thisline in os.popen(cmd).readlines():
 		print thisline.rstrip()
 
-	# Delete original mkv and rename new one to original name
+	# Delete original mkv, rename new one to original name and chmod it
 	print "Cleaning up"
 	os.remove(mkvfilename)
 	os.rename(cleanmoviename, mkvfilename)
+	os.chmod(mkvfilename, 0775)
 
 
 
