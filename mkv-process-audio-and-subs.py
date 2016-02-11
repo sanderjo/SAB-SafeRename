@@ -40,7 +40,7 @@ def handlemkv(mkvfilename):
 	directory, filename = os.path.split(mkvfilename)
 	cleanmoviename = os.path.join(directory, "cleanedmovie.mkv")
 	print "cleanmoviename", cleanmoviename
-	cmd = 'mkvmerge -o "' + cleanmoviename + '" -a 1 --nosubs "' + mkvfilename + '"'
+	cmd = 'mkvmerge -o "' + cleanmoviename + '" -a ' + str(streamnumber) + '  --nosubs "' + mkvfilename + '"'
 	print "command is", cmd
 	for thisline in os.popen(cmd).readlines():
 		print thisline.rstrip()
